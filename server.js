@@ -1,14 +1,12 @@
 const http = require("http");
 const express = require("express");
 const usersRouter = require("./routes/users/usersRouter");
+require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı için bir değişkene atama geregi duymadık
 
 //!Server oluşturma kodları
 const app = express();
-
-
 // Yönlendirme işlemleri
-app.use('/', usersRouter)
-
+app.use("/", usersRouter);
 
 const server = http.createServer(app);
 
