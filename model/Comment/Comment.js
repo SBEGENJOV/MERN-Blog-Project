@@ -2,24 +2,21 @@ const mongoose = require("mongoose");
 
 //Scema
 
-const categoryScema = new mongoose.Schema(
+const commentScema = new mongoose.Schema(
   {
-    name: {
+    message: {
       type: String,
       required: true,
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: "User",
+      required: true,
     },
-    shares: {
-      type: Number,
-      default: 0,
-    },
-    posts: {
+    postsId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
+      required: true,
     },
   },
   {
@@ -27,8 +24,8 @@ const categoryScema = new mongoose.Schema(
   }
 );
 
-//Category modellemesi bitti
+//Comment modellemesi bitti
 
-const Category = mongoose.model("Category", categoryScema);
+const Comment = mongoose.model("Comment", commentScema);
 
-module.exports = Category;
+module.exports = Comment;
