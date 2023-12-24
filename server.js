@@ -1,8 +1,15 @@
 const http = require("http");
 const express = require("express");
+const usersRouter = require("./routes/users/usersRouter");
 
 //!Server oluşturma kodları
 const app = express();
+
+
+// Yönlendirme işlemleri
+app.use('/', usersRouter)
+
+
 const server = http.createServer(app);
 
 //? Server Başlatma kodları
