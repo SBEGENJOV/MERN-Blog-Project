@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://seydi19981995:GUoYAStDSLiz8KlF@mern-blog-v1.wwfafhe.mongodb.net/"
+      "mongodb+srv://seydi19981995:GUoYAStDSLiz8KlF@mern-blog-v1.wwfafhe.mongodb.net"
     );
     console.log("Veri tabanı baglantısı başarılı");
   } catch (error) {

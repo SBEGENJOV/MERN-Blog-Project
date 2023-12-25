@@ -73,10 +73,12 @@ exports.login = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
+    const id = req.userAuth._id;
+    const user = await User.findById(id);
     res.json({
       status: "succes",
       message: "Profile girildi",
-      data: "Kullanıcı bilgileri",
+      user,
     });
   } catch (error) {
     res.json({
