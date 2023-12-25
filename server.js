@@ -11,10 +11,10 @@ const app = express();
 //Gelen verileri JSON formatına dönüştürme işlemi yapılıyor
 app.use(express.json());
 // Yönlendirme işlemleri..
-app.use("/", usersRouter);
+app.use("/api/v1/users", usersRouter);
 
 const server = http.createServer(app);
 
 //? Server Başlatma kodları
 const PORT = process.env.PORT || 1998;
-server.listen(PORT, console.log(`${PORT} portu çalışıyor`));
+server.listen(PORT, console.log(`${PORT} portu çalışıyor..`));

@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../../model/User/User");
+const generateToken = require("../../utils/generateToken");
 
 //@desc Register a new user
 //@route Post /api/v1/users/register
@@ -51,8 +52,36 @@ exports.login = async (req, res) => {
     }
     // Son giriş zamanını güncelleme için veritabanında bir güncelleme işlemi gerçekleştirilmeli
     user.lastLogin = new Date();
-    res.json({ user });
+    res.json({
+      status: "success",
+      email: user?.email,
+      _id: user?._id,
+      username: user?.username,
+      role: user?.role,
+      token: generateToken(user),
+      profilePicture: user?.profilePicture,
+      isVerified: user?.isVerified,
+    });
   } catch (error) {
     res.json({ status: "olumsuz", message: error?.message });
+  }
+};
+
+//@desc Get profile
+//@route Post /api/v1/users/profile/:id
+//@access public
+
+exports.getProfile = async (req, res) => {
+  try {
+    res.json({
+      status: "succes",
+      message: "Profile girildi",
+      data: "Kullanıcı bilgileri",
+    });
+  } catch (error) {
+    res.json({
+      status: "Başarısız",
+      message: error?.message,
+    });
   }
 };
