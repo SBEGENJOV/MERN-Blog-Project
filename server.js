@@ -5,6 +5,11 @@ require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı i�
 
 //!Server oluşturma kodları
 const app = express();
+
+//Middlewarler
+
+//Gelen verileri JSON formatına dönüştürme işlemi yapılıyor
+app.use(express.json());
 // Yönlendirme işlemleri
 app.use("/", usersRouter);
 
