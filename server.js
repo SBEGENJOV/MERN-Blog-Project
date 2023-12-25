@@ -10,7 +10,7 @@ const app = express();
 
 //Gelen verileri JSON formatına dönüştürme işlemi yapılıyor
 app.use(express.json());
-// Yönlendirme işlemleri
+// Yönlendirme işlemleri..
 app.use("/", usersRouter);
 
 const server = http.createServer(app);

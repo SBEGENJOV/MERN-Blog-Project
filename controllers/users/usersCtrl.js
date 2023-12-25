@@ -1,8 +1,9 @@
+const bcrypt = require("bcryptjs");
+const User = require("../../model/User/User");
+
 //@desc Register a new user
 //@route Post /api/v1/users/register
 //@access public
-
-const User = require("../../model/User/User");
 
 exports.register = async (req, res) => {
   try {
@@ -19,6 +20,10 @@ exports.register = async (req, res) => {
       email,
       passwords,
     });
+    //Şifreyi güvenliye dönüştürme
+    const salt = await bcrypt.genSalt(10);
+    newUser.passwords = await bcrypt.hash(passwords, salt);
+    //Kayıt
     await newUser.save();
     res
       .status(200)
