@@ -5,6 +5,7 @@ const {
   notFound,
   globalErrorHandler,
 } = require("./middlewares/globalErrorHandler");
+const categoryRouter = require("./routes/category/categoryRouter");
 require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı için bir değişkene atama geregi duymadık
 
 //!Server oluşturma kodları
@@ -16,6 +17,7 @@ const app = express();
 app.use(express.json());
 // Yönlendirme işlemleri..
 app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/categories", categoryRouter);
 // 404 sayfası
 app.use(notFound);
 //! Hata alınca gitmesi gereken alan
