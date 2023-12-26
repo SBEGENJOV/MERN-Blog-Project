@@ -3,7 +3,7 @@ const User = require("../model/User/User");
 const isLoggin = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
-  jwt.verify(token, "anykey", async (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, async (err, decoded) => {
     //Kullanıcı Id sini bulma
     const userId = decoded?.user?.id;
     //Kullanıcı bilgilerinin tümünü getirdik

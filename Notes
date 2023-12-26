@@ -6,3 +6,4 @@ nodemon
 bcrypt
 jwt
 express-async-handler
+dotenv

@@ -1,4 +1,6 @@
 const http = require("http");
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const usersRouter = require("./routes/users/usersRouter");
 const {
