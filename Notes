@@ -1,0 +1,8 @@
+Kullanılan kütüphaneler:
+
+mongoose
+express
+nodemon
+bcrypt
+jwt
+express-async-handler

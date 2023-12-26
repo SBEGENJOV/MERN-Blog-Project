@@ -12,6 +12,20 @@ const app = express();
 app.use(express.json());
 // Yönlendirme işlemleri..
 app.use("/api/v1/users", usersRouter);
+//! Hata alınca gitmesi gereken alan
+app.use((err, req, res, next) => {
+  //status
+  const status = err?.status ? err?.status : "Hatalı";
+  //mesaj
+  const message = err?.message;
+  //stack
+  const stack = err?.stack;
+  res.status(500).json({
+    status,
+    message,
+    stack,
+  });
+});
 
 const server = http.createServer(app);
 

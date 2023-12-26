@@ -8,7 +8,7 @@ const generateToken = (user) => {
   };
   const token = jwt.sign(payload, "anykey", {
     expiresIn: 36000, 
-  });  // expiresIn : süreyi belirtmek için kullanılır
+  });  // expiresIn : süreyi belirtmek için kullanılır. "anykey" bir anahtardır bu jwt yi çözmek için çözülecegi yerde bunu girmek gerekir.
   return token;
 };
 
