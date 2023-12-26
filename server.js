@@ -1,6 +1,10 @@
 const http = require("http");
 const express = require("express");
 const usersRouter = require("./routes/users/usersRouter");
+const {
+  notFound,
+  globalErrorHandler,
+} = require("./middlewares/globalErrorHandler");
 require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı için bir değişkene atama geregi duymadık
 
 //!Server oluşturma kodları
@@ -12,20 +16,10 @@ const app = express();
 app.use(express.json());
 // Yönlendirme işlemleri..
 app.use("/api/v1/users", usersRouter);
+// 404 sayfası
+app.use(notFound);
 //! Hata alınca gitmesi gereken alan
-app.use((err, req, res, next) => {
-  //status
-  const status = err?.status ? err?.status : "Hatalı";
-  //mesaj
-  const message = err?.message;
-  //stack
-  const stack = err?.stack;
-  res.status(500).json({
-    status,
-    message,
-    stack,
-  });
-});
+app.use(globalErrorHandler);
 
 const server = http.createServer(app);
 
