@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(
+      process.env.MOGO_URL
+    );
     console.log("Veri tabanı baglantısı başarılı");
   } catch (error) {
     console.log("Veri tabanı baglantısı başarısız", error.message);
