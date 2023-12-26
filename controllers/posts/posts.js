@@ -105,3 +105,4 @@ exports.updatePosts = asyncHandler(async (req, res) => {
     post,
   });
 });
+
