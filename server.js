@@ -9,6 +9,7 @@ const {
 } = require("./middlewares/globalErrorHandler");
 const categoryRouter = require("./routes/category/categoryRouter");
 const postRouter = require("./routes/post/postRouter");
+const commentsRouter = require("./routes/comment/commentsRouter");
 require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı için bir değişkene atama geregi duymadık
 
 //!Server oluşturma kodları
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/posts", postRouter);
+app.use("/api/v1/comments", commentsRouter);
 // 404 sayfası
 app.use(notFound);
 //! Hata alınca gitmesi gereken alan

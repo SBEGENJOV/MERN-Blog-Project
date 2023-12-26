@@ -58,7 +58,7 @@ exports.createPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({});
+  const posts = await Post.find({}).populate("comments");
   res.status(201).json({
     status: "Başarılı",
     message: "Postlar getirildi",
