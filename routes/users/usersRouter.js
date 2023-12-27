@@ -10,6 +10,8 @@ const {
   unFollowingUser,
   forgotpassword,
   resetPassword,
+  accountVerificationEmail,
+  verifyAccount,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 
@@ -36,6 +38,18 @@ usersRouter.put("/unfollowing/:userToUnFollowId", isLoggin, unFollowingUser);
 usersRouter.post("/forgot-password/", forgotpassword);
 //! Şifreyi resetleme
 usersRouter.post("/reset-password/:resetToken", resetPassword);
+//! Hesap Onaylama Mail
+usersRouter.put(
+  "/account-verification-email/",
+  isLoggin,
+  accountVerificationEmail
+);
+//! Hesap Onaylama Mail
+usersRouter.put(
+  "/account-verification/:verifyToken",
+  isLoggin,
+  verifyAccount
+);
 
 //*Kullana bilmek için eksport ediyorum
 module.exports = usersRouter;

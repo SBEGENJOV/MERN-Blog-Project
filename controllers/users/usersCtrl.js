@@ -5,6 +5,7 @@ const generateToken = require("../../utils/generateToken");
 const asyncHandler = require("express-async-handler");
 const sendEmail = require("../../utils/sendEmail");
 const expressAsyncHandler = require("express-async-handler");
+const sendAccVerificationEmail = require("../../utils/sendAccVerificationEmail");
 
 //@desc Register a new user
 //@route Post /api/v1/users/register
@@ -293,7 +294,7 @@ exports.resetPassword = expressAsyncHandler(async (req, res) => {
     passwordResetExpires: { $gt: Date.now() },
   });
   if (!userFound) {
-    throw new Error("Password reset token is invalid or has expired");
+    throw new Error("Şifre yenilemek için verilen süre bitmiş olabilir");
   }
   //Şİfreyi değiştiriyoruz
   const salt = await bcrypt.genSalt(10);
@@ -302,5 +303,57 @@ exports.resetPassword = expressAsyncHandler(async (req, res) => {
   userFound.passwordResetToken = undefined;
   //İşlem sonucunu döndürüyoruz
   await userFound.save();
-  res.status(200).json({ message: "Password reset successfully" });
+  res.status(200).json({ message: "Şifre yenileme işlemi başarılı" });
+});
+
+// @route   POST /api/v1/users/account-verification-email/
+// @desc    Send Account verification email
+// @access  Private
+
+exports.accountVerificationEmail = expressAsyncHandler(async (req, res) => {
+  //Kullanıcı mail ini  db de aramak
+  const user = await User.findById(req?.userAuth?._id);
+  if (!user) {
+    throw new Error("Böyle bir kullanıcı yok");
+  }
+  //Token i maile gönderme
+  const token = await user.generateAccVerificationToken();
+  //resave
+  await user.save();
+  //Mail atma
+  sendAccVerificationEmail(user?.email, token);
+  res.status(200).json({
+    message: `Hesabı onaylamak için bilirim bu maile gönderildi: ${user?.email}`,
+  });
+});
+
+
+
+// @route   POST /api/v1/users/verify-account/:verifyToken
+// @desc    Verify token
+// @access  Private
+
+exports.verifyAccount = expressAsyncHandler(async (req, res) => {
+  //Token i kullanıcının taraycısından alacagız
+  const { verifyToken } = req.params;
+  //Veri tabındaki veri ile kullanıcıdan aldıgımız veriyi karşılaştırıyoruz
+  const cryptoToken = crypto
+    .createHash("sha256")
+    .update(verifyToken)
+    .digest("hex");
+  //DB deki veriler ile karşılaştırma yapılıyor
+  const userFound = await User.findOne({
+    accountVerificationToken: cryptoToken,
+    accountVerificationExpires: { $gt: Date.now() },
+  });
+  if (!userFound) {
+    throw new Error("Hesabı onaylamak için gönderilen token tarihi geçmiş olabilir");
+  }
+  //Kullanıcı bilgileri güncellendi
+  userFound.isVerified = true;
+  userFound.accountVerificationExpires = undefined;
+  userFound.accountVerificationToken = undefined;
+  //Sonuç
+  await userFound.save();
+  res.status(200).json({ message: "Hesap onaylandı" });
 });

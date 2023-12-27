@@ -3,7 +3,7 @@ const crypto = require("crypto");
 
 //Scema
 
-const userScema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -83,7 +83,7 @@ const userScema = new mongoose.Schema(
 );
 
 //! Generate Password Reset Token metotu oluşturma
-userScema.methods.generatePasswordResetToken = function () {
+userSchema.methods.generatePasswordResetToken = function () {
   //token oluşturma
   const resetToken = crypto.randomBytes(20).toString("hex");
   //Kullanıcın şifresini sıfırlaması için token üretiyoruz belirlenen yere kaydediyoruz
@@ -92,11 +92,26 @@ userScema.methods.generatePasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
   //Token geçerlilik süresini belirliyoruz
-  this.passwordResetExpires= Date.now() +10 *60*1000
-  return resetToken
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
+};
+
+//! Maile onay için token gönderme
+userSchema.methods.generateAccVerificationToken = function () {
+  //Token oluşturma
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  //Oluşturulan tokeni hashleme
+  this.accountVerificationToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  //Token geçerlilik süresini ayarlama
+  this.accountVerificationExpires = Date.now() + 10 * 60 * 1000; //! 10 minutes
+  return resetToken;
 };
 
 //User modellemesi bitti
-const User = mongoose.model("User", userScema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
