@@ -73,3 +73,36 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+
+
+//@desc Block user
+//@route Post /api/v1/users/block/:id
+//@access privte
+
+exports.blockUser = asyncHandler(async (req, res) => {
+  //* Bloklacanak kişiyi arıyoruz
+  const userIdToBlock = req.params.userIdToBlock;
+  const userToBlock = await User.findById(userIdToBlock);
+  if (!userToBlock) {
+    throw new Error("Kullanıcı yok");
+  }
+  // ! user who is blocking
+  const userBlocking = req.userAuth._id;
+  // check if user is blocking him/herself
+  if (userIdToBlock.toString() === userBlocking.toString()) {
+    throw new Error("Blokun yok");
+  }
+  //find the current user
+  const currentUser = await User.findById(userBlocking);
+  //? Check if user already blocked
+  if (currentUser?.blockedUsers?.includes(userIdToBlock)) {
+    throw new Error("User already blocked");
+  }
+  //push the user to be blocked in the array of the current user
+  currentUser.blockedUsers.push(userIdToBlock);
+  await currentUser.save();
+  res.json({
+    message: "User blocked successfully",
+    status: "success",
+  });
+});
