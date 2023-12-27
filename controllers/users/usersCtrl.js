@@ -106,12 +106,11 @@ exports.blockUser = asyncHandler(async (req, res) => {
   });
 });
 
-
 //@desc unBlock user
 //@route Post /api/v1/users/unblock/:userIdToBlock
 //@access privte
 
-exports.unblockuser = asyncHandler(async(req,res)=>{
+exports.unblockuser = asyncHandler(async (req, res) => {
   //Blokdan çıkaralıcak kişiyi bul
   const userIdToUnBlock = req.params.userIdToUnBlock;
   const userToUnBlock = await User.findById(userIdToUnBlock);
@@ -136,4 +135,31 @@ exports.unblockuser = asyncHandler(async(req,res)=>{
     status: "Başarılı",
     message: "Kullanıcı blokdan çıkarıldı",
   });
-})
+});
+
+//@desc   Kimler profilime baktı
+//@route  GET /api/v1/users/profile-viewer/:userProfileId
+//@access Private
+
+exports.profileViewers = asyncHandler(async (req, res) => {
+  //* Find that we want to view his profile
+  const userProfileId = req.params.userProfileId;
+
+  const userProfile = await User.findById(userProfileId);
+  if (!userProfile) {
+    throw new Error("Böyle bir kullanıcı yok");
+  }
+  //Kendi bilgilerini bulmak
+  const currentUserId = req.userAuth._id;
+  //? Check if user already viewed the profile
+  if (userProfile?.profileViewrs?.includes(currentUserId)) {
+    throw new Error("Zaten bakmışsın");
+  }
+  //push the user current user id into the user profile
+  userProfile.profileViewrs.push(currentUserId);
+  await userProfile.save();
+  res.json({
+    message: "Profile bakılanlar listesine eklendi",
+    status: "Başarılı",
+  });
+});
