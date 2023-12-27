@@ -8,6 +8,8 @@ const {
   profileViewers,
   followingUser,
   unFollowingUser,
+  forgotpassword,
+  resetPassword,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 
@@ -26,10 +28,14 @@ usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
 usersRouter.put("/unblock/:userIdToUnBlock", isLoggin, unblockuser);
 //! Profile bakanları görme
 usersRouter.get("/profile-viewer/:userProfileId", isLoggin, profileViewers);
-//! Profile bakanları görme
+//! Takip etme
 usersRouter.put("/following/:userToFollowId", isLoggin, followingUser);
-//! Profile bakanları görme
+//! Takipden çıkma
 usersRouter.put("/unfollowing/:userToUnFollowId", isLoggin, unFollowingUser);
+//! Şifremi unuttum
+usersRouter.post("/forgot-password/", forgotpassword);
+//! Şifreyi resetleme
+usersRouter.post("/reset-password/:resetToken", resetPassword);
 
 //*Kullana bilmek için eksport ediyorum
 module.exports = usersRouter;

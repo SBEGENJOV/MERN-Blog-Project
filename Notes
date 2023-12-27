@@ -7,3 +7,4 @@ bcrypt
 jwt
 express-async-handler
 dotenv
+nodemailer

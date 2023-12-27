@@ -10,8 +10,8 @@ const {
 const categoryRouter = require("./routes/category/categoryRouter");
 const postRouter = require("./routes/post/postRouter");
 const commentsRouter = require("./routes/comment/commentsRouter");
+const sendEmail = require("./utils/sendEmail");
 require("./config/database")(); //Sayfa açıldıgında direkt çalışacagı için bir değişkene atama geregi duymadık
-
 //!Server oluşturma kodları
 const app = express();
 

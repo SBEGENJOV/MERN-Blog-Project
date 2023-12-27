@@ -1,7 +1,10 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const User = require("../../model/User/User");
 const generateToken = require("../../utils/generateToken");
 const asyncHandler = require("express-async-handler");
+const sendEmail = require("../../utils/sendEmail");
+const expressAsyncHandler = require("express-async-handler");
 
 //@desc Register a new user
 //@route Post /api/v1/users/register
@@ -194,7 +197,7 @@ exports.followingUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     userToFollowId,
     {
-      $addToSet: { followers: currentUserId },//addToSet: Mongo DB kodudur ve yeni bir deger eklemek için kullınılır.
+      $addToSet: { followers: currentUserId }, //addToSet: Mongo DB kodudur ve yeni bir deger eklemek için kullınılır.
     },
     {
       new: true,
@@ -225,7 +228,7 @@ exports.unFollowingUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     currentUserId,
     {
-      $pull: { following: userToUnFollowId },//Pull kodu Mongo DB ye özeldir ve bir degeri çıkrmak için kullanılır
+      $pull: { following: userToUnFollowId }, //Pull kodu Mongo DB ye özeldir ve bir degeri çıkrmak için kullanılır
     },
     {
       new: true,
@@ -246,4 +249,58 @@ exports.unFollowingUser = asyncHandler(async (req, res) => {
     status: "başarılı",
     message: "Takipden çıkma işlemi gerçekleştirildi",
   });
+});
+
+// @route   POST /api/v1/users/forgot-password
+// @desc   Forgot password
+// @access  Public
+
+exports.forgotpassword = expressAsyncHandler(async (req, res) => {
+  const { email } = req.body;
+  //DB de maili arıyoruz
+  const userFound = await User.findOne({ email });
+  if (!userFound) {
+    throw new Error("Email iniz sistemde kayıtlı degil");
+  }
+  //Yeni token oluşturma
+  const resetToken = await userFound.generatePasswordResetToken();
+  //Degişimi kaydediyoruz
+  await userFound.save();
+
+  //send email
+  sendEmail(email, resetToken);
+  res
+    .status(200)
+    .json({ message: "Şifre yenileme mesajı gönderildi", resetToken });
+});
+
+// @route   POST /api/v1/users/reset-password/:resetToken
+// @desc   Reset password
+// @access  Public
+
+exports.resetPassword = expressAsyncHandler(async (req, res) => {
+  //email de gelen parametreyi alma
+  const { resetToken } = req.params;
+  const { password } = req.body;
+  //Veritabındaki token ile dışardan gelen token karşılaştırılır.
+  const cryptoToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  //Bizim verecegimiz özelliklere uyan kişileri buluyoruz
+  const userFound = await User.findOne({
+    passwordResetToken: cryptoToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!userFound) {
+    throw new Error("Password reset token is invalid or has expired");
+  }
+  //Şİfreyi değiştiriyoruz
+  const salt = await bcrypt.genSalt(10);
+  userFound.password = await bcrypt.hash(password, salt);
+  userFound.passwordResetExpires = undefined;
+  userFound.passwordResetToken = undefined;
+  //İşlem sonucunu döndürüyoruz
+  await userFound.save();
+  res.status(200).json({ message: "Password reset successfully" });
 });

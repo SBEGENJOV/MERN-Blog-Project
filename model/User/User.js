@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
 //Scema
 
@@ -81,8 +82,21 @@ const userScema = new mongoose.Schema(
   }
 );
 
-//User modellemesi bitti
+//! Generate Password Reset Token metotu oluşturma
+userScema.methods.generatePasswordResetToken = function () {
+  //token oluşturma
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  //Kullanıcın şifresini sıfırlaması için token üretiyoruz belirlenen yere kaydediyoruz
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  //Token geçerlilik süresini belirliyoruz
+  this.passwordResetExpires= Date.now() +10 *60*1000
+  return resetToken
+};
 
+//User modellemesi bitti
 const User = mongoose.model("User", userScema);
 
 module.exports = User;
