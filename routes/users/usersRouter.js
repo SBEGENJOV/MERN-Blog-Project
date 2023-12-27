@@ -1,3 +1,4 @@
+const multer = require("multer");
 const express = require("express");
 const {
   register,
@@ -14,12 +15,15 @@ const {
   verifyAccount,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
+const storage = require("../../utils/fileUpload");
+//!Dosya yükleme ara yazılımı
+const upload = multer({ storage });
 
 //*Kütüphaneyi kullana bilmek için değişkene atadım.
 const usersRouter = express.Router();
 
 //! Register sayfasına gönderir.
-usersRouter.post("/register", register);
+usersRouter.post("/register", upload.single("profilePicture"), register);
 //! Login sayfasına gönderir.
 usersRouter.post("/login", login);
 //! ID ye göre girme sayfasına gönderir.
@@ -45,11 +49,7 @@ usersRouter.put(
   accountVerificationEmail
 );
 //! Hesap Onaylama Mail
-usersRouter.put(
-  "/account-verification/:verifyToken",
-  isLoggin,
-  verifyAccount
-);
+usersRouter.put("/account-verification/:verifyToken", isLoggin, verifyAccount);
 
 //*Kullana bilmek için eksport ediyorum
 module.exports = usersRouter;
