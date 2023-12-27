@@ -179,12 +179,12 @@ exports.followingUser = asyncHandler(async (req, res) => {
   if (currentUserId.toString() === userToFollowId.toString()) {
     throw new Error("Kendini takip edemezsiz");
   }
-  
+
   //Giriş yapan kişinin takip ettiklerine ekler
   await User.findByIdAndUpdate(
     currentUserId,
     {
-      $addToSet: { following: userToFollowId },
+      $addToSet: { following: userToFollowId }, //addToSet: Mongo DB kodudur ve yeni bir deger eklemek için kullınılır.
     },
     {
       new: true,
@@ -194,7 +194,7 @@ exports.followingUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     userToFollowId,
     {
-      $addToSet: { followers: currentUserId },
+      $addToSet: { followers: currentUserId },//addToSet: Mongo DB kodudur ve yeni bir deger eklemek için kullınılır.
     },
     {
       new: true,
@@ -204,5 +204,46 @@ exports.followingUser = asyncHandler(async (req, res) => {
   res.json({
     status: "Başarılı",
     message: "Takip etme kodu başarılı",
+  });
+});
+
+//@desc   UnFollwing user
+//@route  PUT /api/v1/users/unfollowing/:userIdToUnFollow
+//@access Private
+
+exports.unFollowingUser = asyncHandler(async (req, res) => {
+  //Kendini bulma
+  const currentUserId = req.userAuth._id;
+  //! Takipden çıkacagın kişiyi bulma
+  const userToUnFollowId = req.params.userToUnFollowId;
+
+  //Kendi kendini takipden çıkamazsın
+  if (currentUserId.toString() === userToUnFollowId.toString()) {
+    throw new Error("Kendi kendini takipden çıkamazsın");
+  }
+  //Takip edilenlerden çıkarma kodları
+  await User.findByIdAndUpdate(
+    currentUserId,
+    {
+      $pull: { following: userToUnFollowId },//Pull kodu Mongo DB ye özeldir ve bir degeri çıkrmak için kullanılır
+    },
+    {
+      new: true,
+    }
+  );
+  //Takip edenlerden çıkarma
+  await User.findByIdAndUpdate(
+    userToUnFollowId,
+    {
+      $pull: { followers: currentUserId }, //Pull kodu Mongo DB ye özeldir ve bir degeri çıkrmak için kullanılır
+    },
+    {
+      new: true,
+    }
+  );
+  //send the response
+  res.json({
+    status: "başarılı",
+    message: "Takipden çıkma işlemi gerçekleştirildi",
   });
 });
