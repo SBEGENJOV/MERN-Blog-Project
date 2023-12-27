@@ -74,9 +74,8 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 //@desc Block user
-//@route Post /api/v1/users/block/:id
+//@route Post /api/v1/users/block/:userIdToBlock
 //@access privte
 
 exports.blockUser = asyncHandler(async (req, res) => {
@@ -86,23 +85,55 @@ exports.blockUser = asyncHandler(async (req, res) => {
   if (!userToBlock) {
     throw new Error("Kullanıcı yok");
   }
-  // ! user who is blocking
+  // ! Kendi kendini bloklamasın diye karşılaştırma yapıyoruz.
   const userBlocking = req.userAuth._id;
   // check if user is blocking him/herself
   if (userIdToBlock.toString() === userBlocking.toString()) {
-    throw new Error("Blokun yok");
+    throw new Error("Kendi kendini bloklayamazsın");
   }
   //find the current user
   const currentUser = await User.findById(userBlocking);
   //? Check if user already blocked
   if (currentUser?.blockedUsers?.includes(userIdToBlock)) {
-    throw new Error("User already blocked");
+    throw new Error("Kullanıcı zaten bloklu");
   }
   //push the user to be blocked in the array of the current user
   currentUser.blockedUsers.push(userIdToBlock);
   await currentUser.save();
   res.json({
-    message: "User blocked successfully",
-    status: "success",
+    message: "Kullanıcı başarı ile bloklandı",
+    status: "Başarılı",
   });
 });
+
+
+//@desc unBlock user
+//@route Post /api/v1/users/unblock/:userIdToBlock
+//@access privte
+
+exports.unblockuser = asyncHandler(async(req,res)=>{
+  //Blokdan çıkaralıcak kişiyi bul
+  const userIdToUnBlock = req.params.userIdToUnBlock;
+  const userToUnBlock = await User.findById(userIdToUnBlock);
+  if (!userToUnBlock) {
+    throw new Error("Böyle bir kullanıcı yok");
+  }
+  //Kendimizi buluyoruz
+  const userUnBlocking = req.userAuth._id;
+  const currentUser = await User.findById(userUnBlocking);
+
+  //check if user is blocked before unblocking
+  if (!currentUser.blockedUsers.includes(userIdToUnBlock)) {
+    throw new Error("Bu kullanıcı bloklu değil");
+  }
+  //Kullanıcı bloklular listesinden çıkarma
+  currentUser.blockedUsers = currentUser.blockedUsers.filter(
+    (id) => id.toString() !== userIdToUnBlock.toString()
+  );
+  //resave the current user
+  await currentUser.save();
+  res.json({
+    status: "Başarılı",
+    message: "Kullanıcı blokdan çıkarıldı",
+  });
+})
