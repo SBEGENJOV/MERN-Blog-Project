@@ -169,3 +169,66 @@ exports.disLikePost = expressAsyncHandler(async (req, res) => {
   await post.save();
   res.status(200).json({ message: "Post disliked successfully.", post });
 });
+
+//@desc   clapong a Post
+//@route  PUT /api/v1/posts/claps/:id
+//@access Private
+
+exports.claps = expressAsyncHandler(async (req, res) => {
+  //postu bulma
+  const { id } = req.params;
+  //Postu db de bulma
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post bulunmuyor");
+  }
+  //Alkışları değiştirme
+  const updatedPost = await Post.findByIdAndUpdate(
+    id,
+    {
+      $inc: { claps: 1 },
+    },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({ message: "Post clapped successfully.", updatedPost });
+});
+
+
+//@desc   Shedule a post
+//@route  PUT /api/v1/posts/schedule/:postId
+//@access Private
+
+exports.schedule = expressAsyncHandler(async (req, res) => {
+  //Bilgileri alma
+  const { scheduledPublish } = req.body;
+  const { postId } = req.params;
+  //ID veya paylaşım yokmu kontrol et
+  if (!postId || !scheduledPublish) {
+    throw new Error("ID veya paylaşım yok");
+  }
+  //Post u arama
+  const post = await Post.findById(postId);
+  if (!post) {
+    throw new Error("Post yok ....");
+  }
+  //kullanıcının gönderinin yazarı olup olmadığını kontrol edin
+  if (post.author.toString() !== req.userAuth._id.toString()) {
+    throw new Error("Kendi gönderinizi paylaşabilirsiniz");
+  }
+  // Ne zaman paylaşıldıgını güncelleme
+  const scheduleDate = new Date(scheduledPublish);
+  const currentDate = new Date();
+  if (scheduleDate < currentDate) {
+    throw new Error("Tarih eskisinden daha eski olamaz");
+  }
+  //Post güncellendi
+  post.shedduledPublished = scheduledPublish;
+  await post.save();
+  res.json({
+    status: "Başarılı",
+    message: "Post programı güncellendi",
+    post,
+  });
+});

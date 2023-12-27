@@ -8,6 +8,8 @@ const {
   updatePosts,
   likePost,
   disLikePost,
+  claps,
+  schedule,
 } = require("../../controllers/posts/posts");
 const checkAccountVerification = require("../../middlewares/isAccountVerified");
 
@@ -21,5 +23,7 @@ postRouter.delete("/:id", isLoggin, deletePosts);
 postRouter.put("/:id", isLoggin, updatePosts);
 postRouter.put("/likes/:id", isLoggin, likePost);
 postRouter.put("/dislikes/:id", isLoggin, disLikePost);
+postRouter.put("/claps/:id", isLoggin, claps);
+postRouter.put("/schedule/:postId", isLoggin, schedule);
 
 module.exports = postRouter;
