@@ -106,3 +106,66 @@ exports.updatePosts = asyncHandler(async (req, res) => {
   });
 });
 
+//@desc   liking a Post
+//@route  PUT /api/v1/posts/likes/:id
+//@access Private
+
+exports.likePost = expressAsyncHandler(async (req, res) => {
+  //Post sahibinin id sini alma
+  const { id } = req.params;
+  //Kullanıcının giriş yaptıgı id yi bulma
+  const userId = req.userAuth._id;
+  //Postu bulma
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post yok");
+  }
+  //Begenenlere ekleme
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { likes: userId },
+    },
+    { new: true }
+  );
+  // Dislike deki degeri değiştirme kodu
+  post.dislikes = post.dislikes.filter(
+    (dislike) => dislike.toString() !== userId.toString()
+  );
+  //Sonuçu kaydet
+  await post.save();
+  res.status(200).json({ message: "Post begenilenlere eklendi.", post });
+});
+
+//@desc   disliking a Post
+//@route  PUT /api/v1/posts/dislikes/:id
+//@access Private
+
+exports.disLikePost = expressAsyncHandler(async (req, res) => {
+  //Post sahibini bulma
+  const { id } = req.params;
+  //Kullanıcı ıd sini alma
+  const userId = req.userAuth._id;
+  //Post bulma
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  //Dislike kısımını güncelleme
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { dislikes: userId },
+    },
+    { new: true }
+  );
+  // Likelenen alandan çıkarma
+  post.likes = post.likes.filter(
+    (like) => like.toString() !== userId.toString()
+  );
+  //Sonuçu kaydet
+  await post.save();
+  res.status(200).json({ message: "Post disliked successfully.", post });
+});

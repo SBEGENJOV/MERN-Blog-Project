@@ -6,6 +6,8 @@ const {
   getPosts,
   deletePosts,
   updatePosts,
+  likePost,
+  disLikePost,
 } = require("../../controllers/posts/posts");
 const checkAccountVerification = require("../../middlewares/isAccountVerified");
 
@@ -17,4 +19,7 @@ postRouter.get("/", getPosts);
 postRouter.get("/:id", getPost);
 postRouter.delete("/:id", isLoggin, deletePosts);
 postRouter.put("/:id", isLoggin, updatePosts);
+postRouter.put("/likes/:id", isLoggin, likePost);
+postRouter.put("/dislikes/:id", isLoggin, disLikePost);
+
 module.exports = postRouter;
