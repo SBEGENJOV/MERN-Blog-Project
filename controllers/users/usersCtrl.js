@@ -163,3 +163,46 @@ exports.profileViewers = asyncHandler(async (req, res) => {
     status: "Başarılı",
   });
 });
+
+//@desc   Follwing user
+//@route  PUT /api/v1/users/following/:userIdToFollow
+//@access Private
+
+exports.followingUser = asyncHandler(async (req, res) => {
+  //Giriş yapan kişiyi buluyoruz.
+  const currentUserId = req.userAuth._id;
+  //! Takip edecegimiz kişiyi arıyoruz
+  const userToFollowId = req.params.userToFollowId;
+  console.log(currentUserId);
+  console.log(userToFollowId);
+  //Takip edecegimiz kişinin kendimiz olmadıgını belli ediyoruz
+  if (currentUserId.toString() === userToFollowId.toString()) {
+    throw new Error("Kendini takip edemezsiz");
+  }
+  
+  //Giriş yapan kişinin takip ettiklerine ekler
+  await User.findByIdAndUpdate(
+    currentUserId,
+    {
+      $addToSet: { following: userToFollowId },
+    },
+    {
+      new: true,
+    }
+  );
+  //Aranan kişinin takipçilerine eklemek için kullanılır
+  await User.findByIdAndUpdate(
+    userToFollowId,
+    {
+      $addToSet: { followers: currentUserId },
+    },
+    {
+      new: true,
+    }
+  );
+  //işlem sonucunu gönder
+  res.json({
+    status: "Başarılı",
+    message: "Takip etme kodu başarılı",
+  });
+});
