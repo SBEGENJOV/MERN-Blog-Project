@@ -12,11 +12,22 @@ const {
   schedule,
 } = require("../../controllers/posts/posts");
 const checkAccountVerification = require("../../middlewares/isAccountVerified");
-
+const storage = require("../../utils/fileUpload");
+const multer = require("multer");
 const postRouter = express.Router();
 
+//!Dosya yükleme ara yazılımı
+const upload = multer({ storage });
+
 // oluşturma
-postRouter.post("/", isLoggin, checkAccountVerification, createPost);
+postRouter.post(
+  "/",
+  isLoggin,
+  checkAccountVerification,
+  upload.single("file"),
+  createPost
+);
+
 postRouter.get("/", getPosts);
 postRouter.get("/:id", getPost);
 postRouter.delete("/:id", isLoggin, deletePosts);

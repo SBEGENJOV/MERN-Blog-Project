@@ -8,3 +8,4 @@ jwt
 express-async-handler
 dotenv
 nodemailer
+multer cloudinary
