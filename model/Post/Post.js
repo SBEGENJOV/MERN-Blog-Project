@@ -47,21 +47,33 @@ const postScema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    likes: [{
+    likes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-      }],
-    disLikes: [{
+      },
+    ],
+    disLikes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-      }],
-    comments: [{
+      },
+    ],
+    comments: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-      }],
+      },
+    ],
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
   }
 );
 

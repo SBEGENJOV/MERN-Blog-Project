@@ -70,7 +70,23 @@ exports.login = asyncHandler(async (req, res) => {
 
 exports.getProfile = asyncHandler(async (req, res, next) => {
   const id = req.userAuth._id;
-  const user = await User.findById(id);
+  const user = await User.findById(id)
+    .populate({
+      path: "posts",
+      model: "Post",
+    })
+    .populate({
+      path: "following",
+      model: "User",
+    })
+    .populate({
+      path: "blockedUsers",
+      model: "User",
+    })
+    .populate({
+      path: "profileViewrs",
+      model: "User",
+    });
   res.json({
     status: "succes",
     message: "Profile girildi",
@@ -327,8 +343,6 @@ exports.accountVerificationEmail = expressAsyncHandler(async (req, res) => {
   });
 });
 
-
-
 // @route   POST /api/v1/users/verify-account/:verifyToken
 // @desc    Verify token
 // @access  Private
@@ -347,7 +361,9 @@ exports.verifyAccount = expressAsyncHandler(async (req, res) => {
     accountVerificationExpires: { $gt: Date.now() },
   });
   if (!userFound) {
-    throw new Error("Hesabı onaylamak için gönderilen token tarihi geçmiş olabilir");
+    throw new Error(
+      "Hesabı onaylamak için gönderilen token tarihi geçmiş olabilir"
+    );
   }
   //Kullanıcı bilgileri güncellendi
   userFound.isVerified = true;

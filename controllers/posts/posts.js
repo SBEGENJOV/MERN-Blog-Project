@@ -58,7 +58,46 @@ exports.createPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({}).populate("comments");
+  //Hangi kullanıcının baktıgını belirliyoruz
+  const loggedInUserId = req.userAuth?._id;
+  const currentTime = new Date();
+  //Bu kullanıcı bloclananlar arasında varmı kontrolu saglanıyor
+  const usersBlockingLoggedInuser = await User.find({
+    blockedUsers: loggedInUserId,
+  });
+  // Engellenleri tek tek getirme Id lerine göre
+  const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
+  //! sorgu ile category ve özel yazı arama
+  const category = req.query.category;
+  const searchTerm = req.query.searchTerm;
+  //Blok içinde olmayanları getirir
+  let query = {
+    author: { $nin: blockingUsersIds }, //nin demen not in anlamına gelir ve belli alan haricindekileri getirir.
+    $or: [
+      //or veya anlamında kullanılır.
+      {
+        shedduledPublished: { $lte: currentTime }, //lte   "less than or equal" (küçük veya eşit) anlamına gelir.
+        shedduledPublished: null,
+      },
+    ],
+  };
+
+  if (category) {
+    query.category = category;
+  }
+  if (searchTerm) {
+    query.title = { $regex: searchTerm, $options: "i" };
+  }
+  const posts = await Post.find(query)
+    .populate({
+      path: "author",
+      model: "User",
+      select: "email role username",
+    })
+    .populate("category")
+    .skip(startIndex)
+    .limit(limit)
+    .sort({ createdAt: -1 });
   res.status(201).json({
     status: "Başarılı",
     message: "Postlar getirildi",
@@ -194,7 +233,6 @@ exports.claps = expressAsyncHandler(async (req, res) => {
   );
   res.status(200).json({ message: "Post clapped successfully.", updatedPost });
 });
-
 
 //@desc   Shedule a post
 //@route  PUT /api/v1/posts/schedule/:postId
