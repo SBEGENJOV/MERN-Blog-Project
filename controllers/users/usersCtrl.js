@@ -374,3 +374,59 @@ exports.verifyAccount = expressAsyncHandler(async (req, res) => {
   await userFound.save();
   res.status(200).json({ message: "Hesap onaylandı" });
 });
+
+//@desc  Upload profile image
+//@route  PUT /api/v1/users/upload-profile-image
+//@access Private
+
+exports.uploadeProfilePicture = asyncHandler(async (req, res) => {
+  // Kullanıcıyı arama
+  const userFound = await User.findById(req?.userAuth?._id);
+  if (!userFound) {
+    throw new Error("Kullanıcı Yok");
+  }
+  const user = await User.findByIdAndUpdate(
+    req?.userAuth?._id,
+    {
+      $set: { profilePicture: req?.file?.path }, //resim i güncelleme
+    },
+    {
+      new: true, //yeni degeri döndürür.
+    }
+  );
+
+  //? Sonuçu yazdırma
+  res.json({
+    status: "Başarılı",
+    message: "Kullanıcı resim güncellendi",
+    user,
+  });
+});
+
+//@desc   Upload cover image
+//@route  PUT /api/v1/users/upload-cover-image
+//@access Private
+
+exports.uploadeCoverImage = asyncHandler(async (req, res) => {
+  // Kullanıcıyı arama
+  const userFound = await User.findById(req?.userAuth?._id);
+  if (!userFound) {
+    throw new Error("Böyle bir kullanıcı yok");
+  }
+  const user = await User.findByIdAndUpdate(
+    req?.userAuth?._id,
+    {
+      $set: { coverImage: req?.file?.path },
+    },
+    {
+      new: true,
+    }
+  );
+
+  //? send the response
+  res.json({
+    status: "Başarılı",
+    message: "Kullancı küçük resim güncellendi",
+    user,
+  });
+});

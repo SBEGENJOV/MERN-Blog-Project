@@ -13,6 +13,8 @@ const {
   resetPassword,
   accountVerificationEmail,
   verifyAccount,
+  uploadeProfilePicture,
+  uploadeCoverImage,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
@@ -26,6 +28,20 @@ const usersRouter = express.Router();
 usersRouter.post("/register", upload.single("profilePicture"), register);
 //! Login sayfasına gönderir.
 usersRouter.post("/login", login);
+//! Kullanıcı resim yükleme
+usersRouter.put(
+  "/upload-profile-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeProfilePicture
+);
+//! Kullanıcı küçük resim yükleme
+usersRouter.put(
+  "/upload-cover-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeCoverImage
+);
 //! ID ye göre girme sayfasına gönderir.
 usersRouter.get("/profile/", isLoggin, getProfile);
 //! kullanıcı engelleme
