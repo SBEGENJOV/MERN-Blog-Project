@@ -89,16 +89,39 @@ exports.getPosts = asyncHandler(async (req, res) => {
   if (searchTerm) {
     query.title = { $regex: searchTerm, $options: "i" }; //Burada ara regex ile arama yapılıyor ve options ile ise büyük küçük harf farkı kaldırılıyor.
   }
-  const posts = await Post.find(query)
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await Post.countDocuments(query); //kaçtane post var
+
+  const posts = await Post.find(query) //Aranan kiretere göre post getirme
     .populate({
       path: "author",
       model: "User",
       select: "email role username",
     })
-    .populate("category")
-    .skip(startIndex)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+    .populate("category") //referans tablo
+    .skip(startIndex) //sayfadan kaçıncı postdan itibaren gösterilsin ayarı
+    .limit(limit) //her sayfada kaç tane post götersilsin
+    .sort({ createdAt: -1 }); //En yeni en başa gelmesi için
+  // Sayflama sonuçları
+  const pagination = {};
+  if (endIndex < total) {
+    //toplam post belirlenen sayfalama sayısından büyükse
+    pagination.next = {
+      page: page + 1, //sayfa artır
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
+
   res.status(201).json({
     status: "Başarılı",
     message: "Postlar getirildi",
@@ -272,4 +295,29 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
   });
 });
 
+//@desc   post  view counta
+//@route  PUT /api/v1/posts/:id/post-views-count
+//@access Private
 
+exports.postViewCount = expressAsyncHandler(async (req, res) => {
+  //Postu ID yi bulma
+  const { id } = req.params;
+  //Kullanıcı yı bulma
+  const userId = req.userAuth._id;
+  //Postu bulma
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post yok");
+  }
+  //Post izlenmeyi degiştirme
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { postViews: userId },
+    },
+    { new: true }
+  ).populate("author");
+  await post.save();
+  res.status(200).json({ message: "Post bakan sayısı değiştirildi", post });
+});
