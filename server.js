@@ -20,10 +20,10 @@ const app = express();
 //Gelen verileri JSON formatına dönüştürme işlemi yapılıyor
 app.use(express.json());
 // Yönlendirme işlemleri..
-app.use("/api/v1/users", usersRouter);
-app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/posts", postRouter);
-app.use("/api/v1/comments", commentsRouter);
+app.use("/users", usersRouter);
+app.use("/categories", categoryRouter);
+app.use("/posts", postRouter);
+app.use("/comments", commentsRouter);
 // 404 sayfası
 app.use(notFound);
 //! Hata alınca gitmesi gereken alan
