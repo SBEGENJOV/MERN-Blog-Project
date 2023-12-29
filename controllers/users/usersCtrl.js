@@ -416,7 +416,7 @@ exports.uploadeCoverImage = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req?.userAuth?._id,
     {
-      $set: { coverImage: req?.file?.path },
+      $set: { coverImage: req?.file?.path }, // set:  güncelleme operatörüdür ve bir belgedeki alanların değerlerini güncellemek için kullanılır
     },
     {
       new: true,
@@ -428,5 +428,37 @@ exports.uploadeCoverImage = asyncHandler(async (req, res) => {
     status: "Başarılı",
     message: "Kullancı küçük resim güncellendi",
     user,
+  });
+});
+
+//@desc   Update username/email
+//@route  PUT /api/v1/users/update-profile
+//@access Private
+
+exports.updateUserProfile = asyncHandler(async (req, res) => {
+  //!Kullanıcı kontorlu
+  const userId = req.userAuth?._id;
+  const userFound = await User.findById(userId);
+  if (!userFound) {
+    throw new Error("Kullanıcı bulunamadı");
+  }
+  console.log(userFound);
+  //! Kullanıcı email ve adı degiştirme işlemi
+  const { username, email } = req.body;
+  const post = await User.findByIdAndUpdate(
+    userId,
+    {
+      email: email ? email : userFound?.email,
+      username: username ? username : userFound?.username,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(201).json({
+    status: "Başarılı",
+    message: "Kullanıcı başarı ile güncellendi",
+    post,
   });
 });
