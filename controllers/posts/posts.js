@@ -73,7 +73,7 @@ exports.getPosts = asyncHandler(async (req, res) => {
   const searchTerm = req.query.searchTerm;
   //Blok içinde olmayanları getirir
   let query = {
-    author: { $nin: blockingUsersIds }, //nin demen not in anlamına gelir ve belli alan haricindekileri getirir.
+    author: { $nin: blockingUsersIds }, //nin demek not in anlamına gelir ve belli alan haricindekileri getirir.
     $or: [
       //or veya anlamında kullanılır.
       {
@@ -87,7 +87,7 @@ exports.getPosts = asyncHandler(async (req, res) => {
     query.category = category;
   }
   if (searchTerm) {
-    query.title = { $regex: searchTerm, $options: "i" };
+    query.title = { $regex: searchTerm, $options: "i" }; //Burada ara regex ile arama yapılıyor ve options ile ise büyük küçük harf farkı kaldırılıyor.
   }
   const posts = await Post.find(query)
     .populate({
@@ -271,3 +271,5 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
     post,
   });
 });
+
+
