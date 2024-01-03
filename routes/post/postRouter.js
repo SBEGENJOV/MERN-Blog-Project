@@ -31,7 +31,7 @@ postRouter.post(
 postRouter.get("/", getPosts);
 postRouter.get("/:id", getPost);
 postRouter.delete("/:id", isLoggin, deletePosts);
-postRouter.put("/:id", isLoggin, updatePosts);
+postRouter.put("/:id", isLoggin, upload.single("file"), updatePosts);
 postRouter.put("/likes/:id", isLoggin, likePost);
 postRouter.put("/dislikes/:id", isLoggin, disLikePost);
 postRouter.put("/claps/:id", isLoggin, claps);
