@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
+const cors = require("cors");
 const http = require("http");
 const express = require("express");
 const usersRouter = require("./routes/users/usersRouter");
@@ -19,11 +20,13 @@ const app = express();
 
 //Gelen verileri JSON formatına dönüştürme işlemi yapılıyor
 app.use(express.json());
+app.use(cors());
 // Yönlendirme işlemleri..
 app.use("/users", usersRouter);
 app.use("/categories", categoryRouter);
 app.use("/posts", postRouter);
 app.use("/comments", commentsRouter);
+
 // 404 sayfası
 app.use(notFound);
 //! Hata alınca gitmesi gereken alan
