@@ -26,7 +26,7 @@ const upload = multer({ storage });
 const usersRouter = express.Router();
 
 //! Register sayfasına gönderir.
-usersRouter.post("/register", upload.single("profilePicture"), register);
+usersRouter.post("/register", register);
 //! Login sayfasına gönderir.
 usersRouter.post("/login", login);
 //! Kullanıcı resim yükleme
