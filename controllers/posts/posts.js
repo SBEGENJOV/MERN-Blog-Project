@@ -146,6 +146,12 @@ exports.getPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.deletePosts = asyncHandler(async (req, res) => {
+  const postFound = await Post.findById(req.params.id);
+  const isAuthor =
+    req.userAuth?._id.toString() === postFound?.author?._id?.toString();
+  if (!isAuthor) {
+    throw new Error("İşlem gerçekleştirilemiyor, yazar siz değilsiniz !");
+  }
   await Post.findByIdAndDelete(req.params.id);
   res.status(201).json({
     status: "Başarılı",
