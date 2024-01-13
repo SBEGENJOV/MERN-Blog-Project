@@ -221,6 +221,9 @@ exports.likePost = expressAsyncHandler(async (req, res) => {
   post.dislikes = post.dislikes.filter(
     (dislike) => dislike.toString() !== userId.toString()
   );
+  post.dislikes = post.dislikes.filter(
+    (dislike) => dislike.toString() !== userId.toString()
+  );
   //Sonuçu kaydet
   await post.save();
   res.status(200).json({ message: "Post begenilenlere eklendi.", post });

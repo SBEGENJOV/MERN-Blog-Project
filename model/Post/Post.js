@@ -53,7 +53,7 @@ const postScema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    disLikes: [
+    dislikes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
