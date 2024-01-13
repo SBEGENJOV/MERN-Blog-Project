@@ -94,6 +94,29 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+//@desc  Get profile
+//@route GET /api/v1/users/public-profile/:userId
+//@access Public
+
+exports.getPublicProfile = asyncHandler(async (req, res, next) => {
+  //! get user id from params
+  const userId = req.params.userId;
+  const user = await User.findById(userId)
+    .select("-password")
+    .populate({
+      path: "posts",
+      populate: {
+        path: "category",
+      },
+    });
+  res.json({
+    status: "success",
+    message: "Public Profile fetched",
+    user,
+  });
+});
+
 //@desc Block user
 //@route Post /api/v1/users/block/:userIdToBlock
 //@access privte

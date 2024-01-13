@@ -16,6 +16,7 @@ const {
   uploadeProfilePicture,
   uploadeCoverImage,
   updateUserProfile,
+  getPublicProfile,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
@@ -45,6 +46,8 @@ usersRouter.put(
 );
 //! ID ye göre girme sayfasına gönderir.
 usersRouter.get("/profile/", isLoggin, getProfile);
+//! public profile
+usersRouter.get("/public-profile/:userId", getPublicProfile);
 //! kullanıcı adı ve mail güncelleme
 usersRouter.put("/update-profile/", isLoggin, updateUserProfile);
 //! kullanıcı engelleme

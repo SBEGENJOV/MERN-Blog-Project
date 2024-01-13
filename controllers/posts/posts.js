@@ -142,7 +142,6 @@ exports.getPost = asyncHandler(async (req, res) => {
       populate: {
         path: "author",
         select: "username",
-        select: "profilePicture",
       },
     });
   res.status(201).json({
