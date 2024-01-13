@@ -108,8 +108,7 @@ exports.getPublicProfile = asyncHandler(async (req, res, next) => {
       populate: {
         path: "category",
       },
-    })
-    .execPopulate();
+    });
   res.json({
     status: "success",
     message: "Public Profile fetched",
