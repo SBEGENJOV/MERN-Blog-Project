@@ -65,7 +65,7 @@ exports.getPosts = asyncHandler(async (req, res) => {
   //Bu kullanıcı bloclananlar arasında varmı kontrolu saglanıyor
   const usersBlockingLoggedInuser = await User.find({
     blockedUsers: loggedInUserId,
-  });
+  }).populate("category");
   // Engellenleri tek tek getirme Id lerine göre
   const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
   //! sorgu ile category ve özel yazı arama
@@ -133,7 +133,9 @@ exports.getPosts = asyncHandler(async (req, res) => {
 //@route GET /api/v1/posts/:id
 //@access PUBLIC
 exports.getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
+  const post = await Post.findById(req.params.id)
+    .populate("author")
+    .populate("category");
   res.status(201).json({
     status: "Başarılı",
     message: "Post getirildi",
