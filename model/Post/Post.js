@@ -38,7 +38,7 @@ const postScema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Category",
+      ref: "category",
     },
     accountLevel: {
       type: String,
