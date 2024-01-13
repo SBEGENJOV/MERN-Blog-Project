@@ -103,12 +103,8 @@ exports.getPublicProfile = asyncHandler(async (req, res, next) => {
   const userId = req.params.userId;
   const user = await User.findById(userId)
     .select("-password")
-    .populate({
-      path: "posts",
-      populate: {
-        path: "category",
-      },
-    });
+    .populate("posts")
+    .populate("category");
   res.json({
     status: "success",
     message: "Public Profile fetched",
