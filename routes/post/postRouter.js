@@ -10,6 +10,7 @@ const {
   disLikePost,
   claps,
   schedule,
+  postViewCount,
 } = require("../../controllers/posts/posts");
 const checkAccountVerification = require("../../middlewares/isAccountVerified");
 const storage = require("../../utils/fileUpload");
@@ -36,5 +37,6 @@ postRouter.put("/likes/:id", isLoggin, likePost);
 postRouter.put("/dislikes/:id", isLoggin, disLikePost);
 postRouter.put("/claps/:id", isLoggin, claps);
 postRouter.put("/schedule/:postId", isLoggin, schedule);
+postsRouter.put("/:id/post-view-count", isLoggin, postViewCount);
 
 module.exports = postRouter;
