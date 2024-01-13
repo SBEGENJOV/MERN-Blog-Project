@@ -94,7 +94,6 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 //@desc  Get profile
 //@route GET /api/v1/users/public-profile/:userId
 //@access Public
@@ -109,7 +108,8 @@ exports.getPublicProfile = asyncHandler(async (req, res, next) => {
       populate: {
         path: "category",
       },
-    });
+    })
+    .execPopulate();
   res.json({
     status: "success",
     message: "Public Profile fetched",
