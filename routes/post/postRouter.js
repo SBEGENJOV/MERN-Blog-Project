@@ -37,6 +37,6 @@ postRouter.put("/likes/:id", isLoggin, likePost);
 postRouter.put("/dislikes/:id", isLoggin, disLikePost);
 postRouter.put("/claps/:id", isLoggin, claps);
 postRouter.put("/schedule/:postId", isLoggin, schedule);
-postsRouter.put("/:id/post-view-count", isLoggin, postViewCount);
+postRouter.put("/:id/post-view-count", isLoggin, postViewCount);
 
 module.exports = postRouter;
