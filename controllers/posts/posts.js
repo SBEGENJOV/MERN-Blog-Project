@@ -166,10 +166,27 @@ exports.deletePosts = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.updatePosts = asyncHandler(async (req, res) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  //eşleştirme
+  const { id } = req.params;
+  const postFound = await Post.findById(id);
+  if (postFound) {
+    throw new Error("Post not found");
+  }
+  //resim yolunu belirtme
+  const { title, category, content } = req.body;
+  const post = await Post.findByIdAndUpdate(
+    id,
+    {
+      image: req?.file?.path ? req?.file?.path : postFound?.image,
+      title: title ? title : postFound?.title,
+      category: category ? category : postFound?.category,
+      content: content ? content : postFound?.content,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   res.status(201).json({
     status: "Başarılı",
     message: "Categori güncellendi",
