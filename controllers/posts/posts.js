@@ -8,6 +8,11 @@ const expressAsyncHandler = require("express-async-handler");
 //@access Private
 
 exports.createPost = asyncHandler(async (req, res) => {
+  //!Kullanıcıyı arama ve hesap kontrolu
+  const userFound = await User.findById(req.userAuth._id);
+  if (!userFound) {
+    throw new Error("User Not found");
+  }
   const { title, content, categoryId } = req.body;
   //Post kontollu
   const postFound = await Post.findOne({ title });
