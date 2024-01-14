@@ -22,7 +22,7 @@ const sendAccVerificationEmail = async (to, resetToken) => {
       html: `
         <p>You are receiving this email because you (or someone else) have requested verify you account</p>
         <p>Please click on the following link, or paste this into your browser to complete the process:</p>
-        <p>https://blogify-inovotek.netlify.app/verify-account/${resetToken}</p>
+        <p>https://http://localhost:5173//verify-account/${resetToken}</p>
         <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
         `,
     };
