@@ -66,7 +66,7 @@ exports.login = asyncHandler(async (req, res) => {
 
 //@desc Get profile
 //@route Post /api/v1/users/profile/:id
-//@access public
+//@access private
 
 exports.getProfile = asyncHandler(async (req, res, next) => {
   const id = req.userAuth._id;
@@ -80,11 +80,15 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
       model: "User",
     })
     .populate({
+      path: "followers",
+      model: "User",
+    })
+    .populate({
       path: "blockedUsers",
       model: "User",
     })
     .populate({
-      path: "profileViewrs",
+      path: "profileViewers",
       model: "User",
     });
   res.json({
