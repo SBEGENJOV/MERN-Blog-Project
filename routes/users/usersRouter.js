@@ -71,7 +71,7 @@ usersRouter.put(
   accountVerificationEmail
 );
 //! Hesap Onaylama Mail
-usersRouter.put("/account-verification/:verifyToken/", isLoggin, verifyAccount);
+usersRouter.get("/account-verification/:verifyToken/", isLoggin, verifyAccount);
 
 //*Kullana bilmek için eksport ediyorum
 module.exports = usersRouter;
