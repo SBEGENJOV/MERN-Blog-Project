@@ -55,7 +55,7 @@ usersRouter.put("/block/:userIdToBlock/", isLoggin, blockUser);
 //! kullanıcı engelini kaldırma
 usersRouter.put("/unblock/:userIdToUnBlock/", isLoggin, unblockuser);
 //! Profile bakanları görme
-usersRouter.get("/profile-viewer/:userProfileId/", isLoggin, profileViewers);
+usersRouter.put("/profile-viewer/:userProfileId/", isLoggin, profileViewers);
 //! Takip etme
 usersRouter.put("/following/:userToFollowId/", isLoggin, followingUser);
 //! Takipden çıkma
