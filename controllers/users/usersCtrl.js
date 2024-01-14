@@ -88,7 +88,7 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
       model: "User",
     })
     .populate({
-      path: "profileViewers",
+      path: "profileViewrs",
       model: "User",
     });
   res.json({
