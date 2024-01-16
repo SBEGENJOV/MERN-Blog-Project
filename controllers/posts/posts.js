@@ -182,7 +182,7 @@ exports.updatePosts = asyncHandler(async (req, res) => {
   //eşleştirme
   const { id } = req.params;
   const postFound = await Post.findById(id);
-  if (postFound) {
+  if (!postFound) {
     throw new Error("Post not found");
   }
   //resim yolunu belirtme
